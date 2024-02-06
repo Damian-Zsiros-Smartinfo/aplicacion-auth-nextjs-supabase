@@ -13,7 +13,6 @@ export async function POST(request: NextRequest) {
       throw new Error("Invalid Twilio Credentials");
     const client = twilio(accountSid, authToken);
     const codigo = Math.round(Math.random() * 1000000).toString();
-    console.log(`+${phone}`);
     const {
       data: { id },
       error,
