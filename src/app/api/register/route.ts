@@ -7,8 +7,9 @@ export async function POST(request: NextRequest) {
     try {
         const { email, name, password, phone } = await request.json()
         const userData: UserWithoutId = { email, name, password, phone }
-        const salt = bcrypt.genSaltSync(10);
-        const passwordHashed = bcrypt.hashSync("B4c0/\/", salt);
+        if(!process.env.SALT_ENCRYPT_PASSWORDS) throw new Error() 
+        const salt = bcrypt.genSaltSync(parseInt(process.env.SALT_ENCRYPT_PASSWORDS));
+        const passwordHashed = bcrypt.hashSync(password, salt);
         await db.from('users').insert({ name, email, password: passwordHashed, phone })
         return NextResponse.json({
             logued: true,
