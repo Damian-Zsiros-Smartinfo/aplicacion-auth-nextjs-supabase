@@ -1,6 +1,7 @@
 import { db } from "@/app/db/connection";
 import { User, UserVerify } from "@/app/types/User";
 import { NextRequest, NextResponse } from "next/server";
+import { getOTPByPhone, getUserByPhone } from "../services/usersService";
 
 interface OTPVerification extends Partial<User> {
   code: string;
@@ -10,17 +11,7 @@ export async function POST(request: NextRequest) {
   try {
     const { phone, code }: OTPVerification = await request.json();
     if (!phone || !code) throw new Error("Phone and Code is required");
-    const {
-      data: { id },
-      error,
-    } = await db.from("users").select("*").eq("phone", `+${phone}`).single();
-    if (error) throw new Error(`DB Error: ${error.message}`);
-    const { data, error: err } = await db
-      .from("otp_codes")
-      .select("*")
-      .eq("id_user", id)
-      .single();
-    if (err) throw new Error(`DB Error: ${err.message}`);
+    const data = await getOTPByPhone(phone);
     const { code: codeReal }: { code: string } = data;
     if (codeReal != code) {
       return NextResponse.json(
@@ -33,6 +24,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    const { id } = await getUserByPhone(phone);
     const { error: e } = await db.from("otp_codes").delete().eq("id_user", id);
     if (e) throw new Error(`DB Error: ${e.message}`);
     return NextResponse.json(

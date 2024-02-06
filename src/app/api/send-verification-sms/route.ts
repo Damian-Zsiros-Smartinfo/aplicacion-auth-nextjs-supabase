@@ -2,31 +2,17 @@ import { db } from "@/app/db/connection";
 import { UserVerify } from "@/app/types/User";
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
+import { getUserByPhone, saveOTP } from "../services/usersService";
+import { sendVerificationCodeSMS } from "../services/smsService";
+import { generateVerificationCode } from "@/app/utils/generateVerificationCode";
 
 export async function POST(request: NextRequest) {
   try {
     const { phone }: UserVerify = await request.json();
     if (!phone) throw new Error("Phone is required");
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
-    if (!accountSid || !authToken)
-      throw new Error("Invalid Twilio Credentials");
-    const client = twilio(accountSid, authToken);
-    const codigo = Math.round(Math.random() * 1000000).toString();
-    const {
-      data: { id },
-      error,
-    } = await db.from("users").select("*").eq("phone", `+${phone}`).single();
-    if (error) throw new Error(`DB Error: ${error.message}`);
-    const { error: err } = await db
-      .from("otp_codes")
-      .insert({ id_user: id, code: codigo });
-    if (err) throw new Error(`DB Error: ${err.message}`);
-    client.messages.create({
-      body: `Aqui esta tu codigo de verificacion:  ${codigo}`,
-      from: "+15735383546",
-      to: `+${phone}`,
-    });
+    const codigo = generateVerificationCode();
+    await saveOTP(phone, codigo);
+    await sendVerificationCodeSMS({ phone, codigo });
     return NextResponse.json(
       {
         message: "Codigo enviado correctamente",
