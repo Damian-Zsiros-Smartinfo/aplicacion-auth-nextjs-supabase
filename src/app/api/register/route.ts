@@ -12,12 +12,12 @@ export async function POST(request: NextRequest) {
         const passwordHashed = bcrypt.hashSync(password, salt);
         await db.from('users').insert({ name, email, password: passwordHashed, phone })
         return NextResponse.json({
-            logued: true,
+            registered: true,
             user: userData
         })
     } catch (error) {
         return NextResponse.json({
-            logued: false,
+            registered: false,
             error
         }, { status: 500 })
 
