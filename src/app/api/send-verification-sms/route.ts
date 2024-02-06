@@ -19,7 +19,6 @@ export async function POST(request: NextRequest) {
       error,
     } = await db.from("users").select("*").eq("phone", `+${phone}`).single();
     if (error) throw new Error(`DB Error: ${error.message}`);
-    console.log({ id_user: id, code: codigo });
     const { error: err } = await db
       .from("otp_codes")
       .insert({ id_user: id, code: codigo });
