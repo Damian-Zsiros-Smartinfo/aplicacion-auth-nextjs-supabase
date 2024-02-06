@@ -1,4 +1,3 @@
-import { db } from "@/app/db/connection";
 import { UserWithoutId } from "@/app/types/User";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";

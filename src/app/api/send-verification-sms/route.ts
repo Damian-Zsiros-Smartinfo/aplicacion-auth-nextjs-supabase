@@ -1,8 +1,6 @@
-import { db } from "@/app/db/connection";
 import { UserVerify } from "@/app/types/User";
 import { NextRequest, NextResponse } from "next/server";
-import twilio from "twilio";
-import { getUserByPhone, saveOTP } from "../services/usersService";
+import { saveOTP } from "../services/usersService";
 import { sendVerificationCodeSMS } from "../services/smsService";
 import { generateVerificationCode } from "@/app/utils/generateVerificationCode";
 
