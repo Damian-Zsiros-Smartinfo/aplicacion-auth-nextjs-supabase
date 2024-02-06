@@ -8,3 +8,5 @@ export interface UserWithoutId {
 export interface User extends UserWithoutId {
     id?: string
 }
+
+export type UserVerify = Partial<User> 
