@@ -2,6 +2,8 @@ import { db } from "@/app/db/connection";
 import { User } from "@/app/types/User";
 
 export async function saveUser({ name, email, password, phone }: User) {
+  const userExists = await getUserByEmail(email);
+  if (userExists.exists) return { exists: true };
   return await db.from("users").insert({ name, email, password, phone });
 }
 
@@ -14,13 +16,25 @@ export async function saveOTP(phone: string, code: string) {
   if (err) throw new Error(`DB Error: ${err.message}`);
 }
 
+export async function isSavedUser(email: string) {
+  const result = await db
+    .from("users")
+    .select("*", { count: "exact" })
+    .eq("email", email);
+  const { data } = result;
+  const dataArr = data || [];
+  return dataArr.length > 0;
+}
+
 export async function getUserByEmail(email: string) {
   const { data, error } = await db
     .from("users")
     .select("*")
     .eq("email", email)
     .single();
-  if (error) throw new Error(error.message);
+  if (error) {
+    return { error };
+  }
   return data;
 }
 

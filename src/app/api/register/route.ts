@@ -1,12 +1,28 @@
 import { UserWithoutId } from "@/app/types/User";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { saveUser } from "../services/usersService";
+import {
+  getUserByEmail,
+  isSavedUser,
+  saveUser
+} from "../services/usersService";
 
 export async function POST(request: NextRequest) {
   try {
     const { email, name, password, phone } = await request.json();
     const userData: UserWithoutId = { email, name, password, phone };
+    const isSavedUserActual = await isSavedUser(userData.email);
+    if (isSavedUserActual)
+      return NextResponse.json(
+        {
+          registered: false,
+          exists: isSavedUserActual,
+          error: {
+            message: "Email ya registrado. Intentelo de nuevo."
+          }
+        },
+        { status: 400 }
+      );
     if (!process.env.SALT_ENCRYPT_PASSWORDS) throw new Error();
     const salt = bcrypt.genSaltSync(
       parseInt(process.env.SALT_ENCRYPT_PASSWORDS)
@@ -15,13 +31,13 @@ export async function POST(request: NextRequest) {
     await saveUser({ name, email, password: passwordHashed, phone });
     return NextResponse.json({
       registered: true,
-      user: userData,
+      user: userData
     });
-  } catch (error) {
+  } catch (error: any) {
     return NextResponse.json(
       {
         registered: false,
-        error,
+        error
       },
       { status: 500 }
     );

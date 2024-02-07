@@ -4,6 +4,7 @@ import { User } from "@/types/User";
 import Form from "../components/FormRegister";
 import { registerUser } from "../services/registerUser";
 import { useRouter } from "next/navigation";
+import { isSavedUser } from "../api/services/usersService";
 
 export default function RegisterPage() {
   const { push: redirect } = useRouter();
@@ -25,15 +26,19 @@ export default function RegisterPage() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    const {
-      data: { registered },
-      error
-    } = await registerUser(UserInfo);
-    if (error || !registered) {
-      alert("Ocurrió un error al intentar realizar el registro.");
+    const { data, error } = await registerUser(UserInfo);
+    const statusRegister = data?.registered || false;
+    if (data.exists == true) {
+      alert("Ya hay otro usuario con ese email. Intenta con otro email");
+      return setIsSubmitting(false);
+    }
+    if (error) {
+      alert(
+        "Ocurrió un error al intentar realizar el registro. Pruebe con otro correo electronico o si persiste contacte con el administrador."
+      );
       setIsSubmitting(false);
     }
-    if (registered) {
+    if (statusRegister) {
       alert("Has sido registrado correctamente...");
       setIsSubmitting(false);
       redirect("/login");
