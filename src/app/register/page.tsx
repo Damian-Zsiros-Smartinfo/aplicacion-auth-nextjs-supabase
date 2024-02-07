@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { User } from "@/types/User";
-import Form from "../components/Form";
+import Form from "../components/FormRegister";
 import { registerUser } from "../services/registerUser";
 import { useRouter } from "next/navigation";
 
