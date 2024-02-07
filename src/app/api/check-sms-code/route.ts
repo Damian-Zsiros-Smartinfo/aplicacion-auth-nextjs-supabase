@@ -32,7 +32,6 @@ export async function POST(request: NextRequest) {
       parseInt(process.env.SALT_ENCRYPT_PASSWORDS)
     );
     const passwordHashed = bcrypt.hashSync(password, salt);
-    console.log(id);
     const { error: er } = await db
       .from("users")
       .update({ password: passwordHashed })

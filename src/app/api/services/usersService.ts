@@ -39,17 +39,16 @@ export async function getUserByEmail(email: string) {
 }
 
 export async function getUserByPhone(phone: string) {
-  const { data, error } = await db
+  const { data, error: err } = await db
     .from("users")
     .select("*")
-    .eq("phone", `${phone}`)
-    .single();
-  return data;
+    .eq("phone", phone);
+  if (err) throw new Error(`DB Error: ${err.message}`);
+  return data[0];
 }
 
 export async function getOTPByPhone(phone: string) {
-  const userByPhone = await getUserByPhone(phone);
-  console.log(userByPhone.id);
+  const userByPhone: User = await getUserByPhone(phone);
   const { data, error: err } = await db
     .from("otp_codes")
     .select("*")
