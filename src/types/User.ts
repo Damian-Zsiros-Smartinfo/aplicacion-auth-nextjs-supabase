@@ -8,3 +8,5 @@ export interface User {
 export interface UserWithId extends User {
   id: string;
 }
+
+export type UserLoginInfo = Partial<User>;
