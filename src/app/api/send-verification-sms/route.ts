@@ -9,7 +9,6 @@ export async function POST(request: NextRequest) {
     const { email }: UserVerify = await request.json();
     if (!email) throw new Error("Email is required");
     const user = await getUserByEmail(email);
-    console.log(user.phone);
     const phone = user.phone;
     const codigo = generateVerificationCode();
     await saveOTP(email, codigo);
