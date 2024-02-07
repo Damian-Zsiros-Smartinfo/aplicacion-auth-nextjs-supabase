@@ -2,8 +2,11 @@
 import React, { useState } from "react";
 import { User } from "@/types/User";
 import Form from "../components/Form";
+import { registerUser } from "../services/registerUser";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
+  const { push: redirect } = useRouter();
   const [UserInfo, setUserInfo] = useState<User>({
     name: "",
     email: "",
@@ -20,20 +23,15 @@ export default function RegisterPage() {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const res = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "aplication/json"
-        },
-        body: JSON.stringify(UserInfo)
-      });
-      if (!res.ok) throw new Error();
-      const { registered } = await res.json();
-      if (registered) alert("Has sido registrado correctamente...");
-    } catch (error) {
-      console.error(error);
+    const {
+      data: { registered },
+      error
+    } = await registerUser(UserInfo);
+    if (error || !registered)
       alert("Ocurrió un error al intentar realizar el registro.");
+    if (registered) {
+      alert("Has sido registrado correctamente...");
+      redirect("/login");
     }
   };
   return (
