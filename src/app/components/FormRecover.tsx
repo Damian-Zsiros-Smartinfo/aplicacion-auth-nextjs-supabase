@@ -10,7 +10,7 @@ interface Props {
   isSubmitting?: boolean | false;
 }
 
-export default function FormLogin({
+export default function FormRecover({
   onSubmit,
   onChange,
   isSubmitting = false
@@ -28,18 +28,11 @@ export default function FormLogin({
         onChange={onChange}
         required
       />
-      <Input
-        textLabel="Password"
-        type="password"
-        id="password"
-        onChange={onChange}
-        required
-      />
       <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? `Iniciando sesion...` : `Iniciar sesion`}
+        {isSubmitting
+          ? `Enviando mensaje de verificacion...`
+          : `Enviar mensaje de verificacion`}
       </button>
-
-      <Link href="/recover-password">¿Quieres recuperar tu contraseña?</Link>
     </form>
   );
 }

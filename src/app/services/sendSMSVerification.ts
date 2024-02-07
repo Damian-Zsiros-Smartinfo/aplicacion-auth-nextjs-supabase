@@ -1,17 +1,17 @@
 import { User } from "@/types/User";
 
-export async function registerUser(userInfo: User) {
+export async function sendSMSVerification(email: string) {
   try {
-    const res = await fetch("/api/register", {
+    const res = await fetch("/api/send-verification-sms", {
       method: "POST",
       headers: {
         "Content-Type": "aplication/json"
       },
-      body: JSON.stringify(userInfo)
+      body: JSON.stringify({ email })
     });
     const data = await res.json();
     return { data };
   } catch (error) {
-    return { data: { registered: false, exists: false }, error };
+    return { data: {}, error };
   }
 }

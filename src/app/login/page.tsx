@@ -4,6 +4,7 @@ import { UserLoginInfo } from "@/types/User";
 import Form from "../components/FormLogin";
 import { useRouter } from "next/navigation";
 import { loginUser } from "../services/loginUser";
+import Link from "next/link";
 
 export default function RegisterPage() {
   const { push: redirect } = useRouter();

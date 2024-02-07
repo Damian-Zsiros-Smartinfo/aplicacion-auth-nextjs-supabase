@@ -8,7 +8,7 @@ export async function saveUser({ name, email, password, phone }: User) {
 }
 
 export async function saveOTP(phone: string, code: string) {
-  const data = await getUserByPhone(phone);
+  const data = await getUserByEmail(phone);
   const { id } = data;
   const { error: err } = await db
     .from("otp_codes")
@@ -42,20 +42,18 @@ export async function getUserByPhone(phone: string) {
   const { data, error } = await db
     .from("users")
     .select("*")
-    .eq("phone", `+${phone}`)
+    .eq("phone", `${phone}`)
     .single();
-  if (error) throw new Error(error.message);
   return data;
 }
 
 export async function getOTPByPhone(phone: string) {
   const userByPhone = await getUserByPhone(phone);
-  const { id } = userByPhone;
+  console.log(userByPhone.id);
   const { data, error: err } = await db
     .from("otp_codes")
     .select("*")
-    .eq("id_user", id)
-    .single();
+    .eq("id_user", userByPhone.id);
   if (err) throw new Error(`DB Error: ${err.message}`);
-  return data;
+  return data[0];
 }

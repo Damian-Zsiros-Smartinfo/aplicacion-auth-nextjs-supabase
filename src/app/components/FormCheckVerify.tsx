@@ -10,7 +10,7 @@ interface Props {
   isSubmitting?: boolean | false;
 }
 
-export default function FormLogin({
+export default function FormRecover({
   onSubmit,
   onChange,
   isSubmitting = false
@@ -22,9 +22,9 @@ export default function FormLogin({
       className="flex flex-col gap-4 border p-4 rounded"
     >
       <Input
-        textLabel="Email"
-        type="email"
-        id="email"
+        textLabel="Codigo de verificacion"
+        type="text"
+        id="code"
         onChange={onChange}
         required
       />
@@ -36,10 +36,10 @@ export default function FormLogin({
         required
       />
       <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? `Iniciando sesion...` : `Iniciar sesion`}
+        {isSubmitting
+          ? `Verificando mensaje de verificacion...`
+          : `Verificar mensaje de verificacion`}
       </button>
-
-      <Link href="/recover-password">¿Quieres recuperar tu contraseña?</Link>
     </form>
   );
 }
