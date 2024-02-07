@@ -6,11 +6,17 @@ import { User } from "@/types/User";
 interface Props {
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   onSubmit?: React.FormEventHandler<HTMLFormElement>;
+  isSubmitting?: boolean | false;
 }
 
-export default function Form({ onSubmit, onChange }: Props) {
+export default function Form({
+  onSubmit,
+  onChange,
+  isSubmitting = false
+}: Props) {
   return (
     <form
+      method="POST"
       onSubmit={onSubmit}
       className="flex flex-col gap-4 border p-4 rounded"
     >
@@ -43,7 +49,9 @@ export default function Form({ onSubmit, onChange }: Props) {
         onChange={onChange}
         required
       />
-      <button type="submit">Registrarme</button>
+      <button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? `Registrando...` : `Registrarme`}
+      </button>
     </form>
   );
 }
